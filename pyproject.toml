@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "Otter-Buddy"
+version = "0.1.0"
+description = "Discord bot to help you to prepare for your interviews."
+authors = ["akotadi <manuel_7795@hotmail.com>"]
+license = "MIT"
+
+readme = "README.md"
+
+homepage = "https://proyectonutria.com"
+repository = "https://github.com/Proyecto-Nutria/otter-buddy.git"
+documentation = "https://github.com/Proyecto-Nutria/otter-buddy/blob/master/README.md"
+
+keywords = ["Bot", "Discord"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+"discord.py" = "^1.7.0"
+pymongo = "3.11.4"
+python-dotenv = "0.15.0"
+humanfriendly = "9.1"
+psutil = "5.8.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.masonry.api"
