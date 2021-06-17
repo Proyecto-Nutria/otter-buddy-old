@@ -27,11 +27,7 @@ class Help(commands.Cog):
             embed = discord.Embed(description=headers + desc + footers, color=BRAND_COLOR)
             embed.set_author(name="Otter-Buddy commands help", icon_url=ctx.me.avatar_url)
             embed.set_footer(
-                text="Use the prefix {} before each command. For detailed usage about a particular command, type {}help <command>".format(PREFIX, PREFIX))
-            embed.add_field(name="GitHub repository", value=f"[GitHub]({GITHUB_LINK})",
-                            inline=True)
-            embed.add_field(name="Support Server", value=f"[Server]({SERVER_INVITE})",
-                            inline=True)
+                text="Use the prefix *{}* before each command. For detailed usage about a particular command, type {}help <command>".format(PREFIX, PREFIX))
             embeds.append(embed)
 
         return embeds
@@ -44,7 +40,7 @@ class Help(commands.Cog):
                 params.append(f"[{key}]" if "NoneType" in str(value) else f"<{key}>")
         usage += ' '.join(params)
         aliases = [str(command), *command.aliases]
-        embed = discord.Embed(title=f"Information about {str(command)}", color=discord.Color.dark_magenta())
+        embed = discord.Embed(title=f"Information about {str(command)}", color=BRAND_COLOR)
         embed.add_field(name="Description", value=command.brief, inline=False)
         embed.add_field(name="Usage", value=f"`{usage}`", inline=False)
         embed.add_field(name="Aliases", value=f"{' '.join([f'`{x}`' for x in aliases])}", inline=False)

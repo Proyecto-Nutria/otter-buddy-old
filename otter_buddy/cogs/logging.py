@@ -7,6 +7,7 @@ from discord.ext import commands
 from otter_buddy.utils import discord_common
 
 root_logger = logging.getLogger()
+print(__name__)
 logger = logging.getLogger(__name__)
 
 

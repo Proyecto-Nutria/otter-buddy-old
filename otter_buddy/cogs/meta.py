@@ -79,22 +79,23 @@ class Meta(commands.Cog):
         await message.edit(content=f'REST API latency: {int(duration)}ms\n'
                                    f'Gateway API latency: {int(self.bot.latency * 1000)}ms')
 
-    @meta.command(brief='Get git information')
-    async def git(self, ctx):
-        """Replies with git information."""
-        await ctx.send('```yaml\n' + git_history() + '```')
-
     @meta.command(brief='Prints bot uptime')
     async def uptime(self, ctx):
         """Replies with how long Otter-Buddy has been up."""
         await ctx.send('Otter-Buddy has been running for ' +
                        pretty_time_format(time.time() - self.start_time))
 
+    @meta.command(brief='Get git information')
+    @commands.has_role(constants.OTTER_ADMIN)
+    async def git(self, ctx):
+        """Replies with git information."""
+        await ctx.send('```yaml\n' + git_history() + '```')
+
     @meta.command(brief='Print bot guilds')
     @commands.has_role(constants.OTTER_ADMIN)
     async def guilds(self, ctx):
         "Replies with info on the bot's guilds"
-        msg = [f'Guild ID: {guild.id} | Name: {guild.name} | Owner: {guild.owner.id} | Icon: {guild.icon_url}'
+        msg = [f'Guild ID: {guild.id} | Name: {guild.name} | Members: {guild.member_count}'
                 for guild in self.bot.guilds]
         await ctx.send('```' + '\n'.join(msg) + '```')
 
