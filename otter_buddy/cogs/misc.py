@@ -1,4 +1,5 @@
 import discord
+import logging
 import time
 
 from discord.ext import commands
@@ -7,6 +8,9 @@ from psutil import Process, virtual_memory
 
 from otter_buddy import constants
 from otter_buddy.data import dbconn
+from otter_buddy.constants import OTTER_ROLE
+
+logger = logging.getLogger(__name__)
 
 
 class Misc(commands.Cog):
@@ -49,6 +53,24 @@ class Misc(commands.Cog):
                         inline=True)
 
         await ctx.send(embed=embed)
+
+    @commands.Cog.listener(name='on_raw_reaction_add')
+    async def reaction_give_role(self, payload: discord.RawReactionActionEvent):
+        try:
+            guild = next(guild for guild in self.bot.guilds if guild.id == payload.guild_id)
+            role = discord.utils.get(guild.roles, name=OTTER_ROLE)
+            if role == None:
+                logger.error(f"Not role found in {__name__} for guild {guild.name}")
+                return
+            await discord.Member.add_roles(payload.member, role)
+        except StopIteration:
+            logger.error(f"Not guild found in {__name__}")
+        except discord.Forbidden:
+            logger.error(f"Not permissions to add the role in {__name__}")
+        except discord.HTTPException:
+            logger.error(f"Adding roles failed in {__name__}")
+        except:
+            logger.error(f"Exception in {__name__}")
 
 
 def setup(bot):

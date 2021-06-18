@@ -6,6 +6,7 @@ GITHUB_LINK = "https://github.com/Proyecto-Nutria/otter-buddy"
 
 OTTER_ADMIN = os.environ.get('OTTER_ADMIN', 'Admin')
 OTTER_MODERATOR = os.environ.get('OTTER_MODERATOR', 'Moderator')
+OTTER_ROLE = os.environ.get('OTTER_ROLE', 'Interviewee')
 
 LOGS_DIR = 'logs'
 
