@@ -1,21 +1,18 @@
-import argparse
-import asyncio
-import distutils.util
-import logging
 import os
-import discord
+import logging
 from dotenv import load_dotenv
-from logging.handlers import TimedRotatingFileHandler
 from os import environ
 from pathlib import Path
+from logging.handlers import TimedRotatingFileHandler
 
+import discord
 from discord.ext.commands import Bot, when_mentioned_or, NoPrivateMessage
 
 from otter_buddy import constants
 from otter_buddy.utils import discord_common
 
 
-def setup():
+def setup() -> None:
     # Load enviroment variables.
     load_dotenv()
 
@@ -23,7 +20,7 @@ def setup():
     for path in constants.ALL_DIRS:
         os.makedirs(path, exist_ok=True)
 
-    # logging to console and file on daily interval
+    # Logging to console and file on daily interval
     logging.basicConfig(format='{asctime}:{levelname}:{name}:{message}', style='{',
                         datefmt='%d-%m-%Y %H:%M:%S', level=logging.INFO,
                         handlers=[logging.StreamHandler(),
@@ -31,36 +28,50 @@ def setup():
                                                            backupCount=3, utc=True)])
 
 
-def main():
+def main() -> None:
     setup()
 
-    token = environ.get('BOT_TOKEN')
+    token: str = environ.get('BOT_TOKEN')
     if not token:
         logging.error('Token required')
         return
     
-    intents = discord.Intents.default()
+    # Gateway requested by Discord to allow usage from users
+    intents: discord.Intents = discord.Intents.all()
+    intents.bans = False
+    intents.dm_typing = False
+    intents.emojis = False
+    intents.guild_typing = False
+    intents.integrations = False
+    intents.presences = False
+    intents.typing = False
+    intents.webhooks = False
+    bot: Bot = Bot(
+        case_insensitive=True, 
+        description="Otter-Buddy Bot", 
+        command_prefix=when_mentioned_or(constants.PREFIX), 
+        intents=intents,
+        activity=discord.Activity(
+            type=discord.ActivityType.listening,
+            name="{}help".format(constants.PREFIX)
+        )
+    )
 
-    bot = Bot(case_insensitive=True, description="Otter-Buddy Bot", command_prefix=when_mentioned_or(constants.PREFIX), intents=intents)
-    cogs = [file.stem for file in Path('otter_buddy', 'cogs').glob('*.py')]
+    # Load collections of commands, listeners, etc.
+    cogs: [str] = [file.stem for file in Path('otter_buddy', 'cogs').glob('*.py')]
     for extension in cogs:
         bot.load_extension(f'otter_buddy.cogs.{extension}')
     logging.info(f'Cogs loaded: {", ".join(bot.cogs)}')
 
+    # Restrict bot usage to inside guild channels only.
     def no_dm_check(ctx):
         if ctx.guild is None:
             raise NoPrivateMessage('Private messages not permitted.')
         return True
-
-    # Restrict bot usage to inside guild channels only.
     bot.add_check(no_dm_check)
 
-    # on_ready event handler rather than an on_ready listener.
-    @discord_common.on_ready_event_once(bot)
-    async def init():
-        asyncio.create_task(discord_common.presence(bot))
-
     bot.add_listener(discord_common.bot_error_handler, name='on_command_error')
+
     bot.run(token)
 
 

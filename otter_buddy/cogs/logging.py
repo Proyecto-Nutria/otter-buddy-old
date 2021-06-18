@@ -24,11 +24,9 @@ class Logging(commands.Cog, logging.Handler):
     @discord_common.once
     async def on_ready(self):
         self.task = asyncio.create_task(self._log_task())
-        width = 79
-        stars, msg = f'{"*" * width}', f'***{"Bot running":^{width - 6}}***'
-        self.logger.log(level=100, msg=stars)
+        width = 59
+        msg = f'\n{"*" * width}\n***{"otter-buddy is alive!":^{width - 6}}***\n{"*" * width}'
         self.logger.log(level=100, msg=msg)
-        self.logger.log(level=100, msg=stars)
 
     async def _log_task(self):
         while True:

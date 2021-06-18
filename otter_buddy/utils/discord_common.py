@@ -137,10 +137,3 @@ def on_ready_event_once(bot):
             await func()
 
     return register_on_ready
-
-
-async def presence(bot):
-    await bot.change_presence(activity=discord.Activity(
-        type=discord.ActivityType.listening,
-        name="{}help".format(constants.PREFIX)))
-    await asyncio.sleep(60)
