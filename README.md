@@ -5,7 +5,7 @@ Discord bot to help you to prepare for your interviews.
 
 ## Features
 
-1. Statistics about usage
+1. Give Discord role when reacted to messages
 
 ## Usage
 
