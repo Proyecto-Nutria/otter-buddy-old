@@ -5,7 +5,7 @@ Discord bot to help you to prepare for your interviews.
 
 ## Features
 
-1. Statistics about usage
+1. Give Discord role when reacted to messages
 
 ## Usage
 
@@ -29,8 +29,10 @@ Fill in appropriate variables in new "environment" (`.env`) file.
 - **BOT_TOKEN**: the Discord Bot Token for your bot.
 - **LOGGING_CHANNEL**: the [Discord Channel ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) of a Discord Channel where you want error messages sent to.
 - **MONGO_URI**: address of the [MongoDB](https://www.mongodb.com/cloud/atlas) cluster.
-- **OTTER_ADMIN**: Discord rol that give access to admin role based commands.
-- **OTTER_MODERATOR**: Discord rol that give access to moderator role based commands.
+- **WELCOME_MESSAGES**: [`message ids`](https://discord.com/developers/docs/resources/channel#message-object-message-structure) separated by `,` that give `OTTER_ROLE` when reacted to.
+- **OTTER_ADMIN**: Discord role that give access to admin role based commands.
+- **OTTER_MODERATOR**: Discord role that give access to moderator role based commands.
+- **OTTER_ROLE**: Discord role to give when reacted to `WELCOME_MESSAGES`.
 
 #### Constants
 

@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 @pytest.fixture
 async def bot(event_loop):
-    bot = Bot(command_prefix=PREFIX, intents=Intents(members=True))
+    bot = Bot(command_prefix=PREFIX, intents=Intents(members=True, guilds=True))
 
     yield bot
 
