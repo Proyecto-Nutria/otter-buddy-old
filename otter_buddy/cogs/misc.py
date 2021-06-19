@@ -56,7 +56,7 @@ class Misc(commands.Cog):
 
     @commands.Cog.listener(name='on_raw_reaction_add')
     async def reaction_give_role(self, payload: discord.RawReactionActionEvent):
-        if str(payload.message_id) in WELCOME_MESSAGES:
+        if not WELCOME_MESSAGES or str(payload.message_id) in WELCOME_MESSAGES:
             try:
                 guild = next(guild for guild in self.bot.guilds if guild.id == payload.guild_id)
                 role = discord.utils.get(guild.roles, name=OTTER_ROLE)
@@ -70,8 +70,9 @@ class Misc(commands.Cog):
                 logger.error(f"Not permissions to add the role in {__name__}")
             except discord.HTTPException:
                 logger.error(f"Adding roles failed in {__name__}")
-            except:
+            except Exception as e:
                 logger.error(f"Exception in {__name__}")
+                logger.error(e)
 
 
 def setup(bot):
