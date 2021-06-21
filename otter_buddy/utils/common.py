@@ -1,8 +1,13 @@
 import logging
 import math
 import time
+import re
 
 logger = logging.getLogger(__name__)
+
+# Based on RFC 5322 Official Standard
+# Ref: https://www.ietf.org/rfc/rfc5322.txt
+email_regex: str = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 
 def time_format(seconds):
     seconds = int(seconds)
@@ -32,10 +37,8 @@ def pretty_time_format(seconds, *, shorten=False, only_most_significant=False, a
     return ' '.join(map(format_, timeprint))
 
 
-def days_ago(t):
-    days = (time.time() - t)/(60*60*24)
-    if days < 1:
-        return 'today'
-    if days < 2:
-        return 'yesterday'
-    return f'{math.floor(days)} days ago'
+def is_valid_email(email: str) -> bool:
+    if(re.search(email_regex, email)):   
+        return True  
+    else:   
+        return False
