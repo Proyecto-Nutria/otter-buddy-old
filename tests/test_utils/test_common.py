@@ -180,3 +180,61 @@ def test_time_format():
     time = pretty_time_format(seconds, shorten=True, only_most_significant=True)
     expected = "2d"
     assert time == expected
+
+def test_valid_email():
+    email = "Test00@test.com"
+    assert is_valid_email(email)
+
+def test_valid_email_underscore():
+    email = "my_Test00_11@test.com"
+    assert is_valid_email(email)
+
+def test_valid_email_minus():
+    email = "my-Test00-11@test.com"
+    assert is_valid_email(email)
+
+def test_valid_email_dot():
+    email = "my.Test00.11@test.com"
+    assert is_valid_email(email)
+
+def test_valid_email_dot():
+    email = "my.Test00.11@test.com"
+    assert is_valid_email(email)
+
+def test_valid_email_country():
+    email = "my.Test00.11@test.com.mx"
+    assert is_valid_email(email)
+
+def test_valid_email_custom_domain():
+    email = "my.Test00.11@custom-domain.com"
+    assert is_valid_email(email)
+
+def test_phrase_as_email():
+    email = "This is a test"
+    assert not is_valid_email(email)
+
+def test_incomplete_email():
+    email = "test"
+    assert not is_valid_email(email)
+
+    email = "test@"
+    assert not is_valid_email(email)
+
+    email = "test@test"
+    assert not is_valid_email(email)
+
+    email = "test@test."
+    assert not is_valid_email(email)
+
+    email = "test.com"
+    assert not is_valid_email(email)
+
+def test_invalid_email():
+    email = "test!@test.com"
+    assert not is_valid_email(email)
+
+    email = "test@test!.com"
+    assert not is_valid_email(email)
+
+    email = "test@test.com!"
+    assert not is_valid_email(email)
