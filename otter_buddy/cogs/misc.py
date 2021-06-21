@@ -9,6 +9,7 @@ from psutil import Process, virtual_memory
 from otter_buddy import constants
 from otter_buddy.data import dbconn
 from otter_buddy.constants import OTTER_ROLE, WELCOME_MESSAGES
+from otter_buddy.utils.common import is_valid_email
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,16 @@ class Misc(commands.Cog):
         Echo will reply your message with the `text` that you wrote next to the command.
         '''
         await ctx.send(content)
+
+    @commands.command(brief="Add your `email` for notifications", usage='<email>')
+    async def subscribe(self, ctx, email:str):
+        '''
+        Subscribe to our notifications via email..
+        '''
+        if is_valid_email(email):
+            await ctx.send(email)
+        else:
+            await ctx.send("Write a valid email")
 
     @commands.command()
     async def botinfo(self, ctx):
