@@ -1,8 +1,10 @@
 import logging
 import math
 import time
+import re
 
 logger = logging.getLogger(__name__)
+email_regex: str = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 
 def time_format(seconds):
     seconds = int(seconds)
@@ -39,3 +41,10 @@ def days_ago(t):
     if days < 2:
         return 'yesterday'
     return f'{math.floor(days)} days ago'
+
+
+def is_valid_email(email: str) -> bool:
+    if(re.search(email_regex, email)):   
+        return True  
+    else:   
+        return False
