@@ -1,4 +1,3 @@
-import pymongo
 import mongomock
 from unittest.mock import patch
 
