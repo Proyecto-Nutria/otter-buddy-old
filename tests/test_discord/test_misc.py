@@ -20,13 +20,13 @@ def misc_cog(bot: discord.ext.commands.Bot):
 # === TESTING ===
 
 @pytest.mark.asyncio
-async def test_echo_command(bot):
+async def test_echo_command():
     msg_content: str = "This is a test!"
     await dpytest.message(f'{constants.PREFIX}echo {msg_content}')
     assert dpytest.verify().message().content(msg_content)
 
 @pytest.mark.asyncio
-async def test_pass_role_reaction_event(bot):
+async def test_pass_role_reaction_event():
     config = dpytest.get_config()
     user: discord.Member = config.members[0]
     guild: discord.Guild = config.guilds[0]
@@ -38,7 +38,7 @@ async def test_pass_role_reaction_event(bot):
     assert constants.OTTER_ROLE in map(lambda role: role.name, user.roles)
 
 @pytest.mark.asyncio
-async def test_fail_role_reaction_event(bot):
+async def test_fail_role_reaction_event():
     config = dpytest.get_config()
     user: discord.Member = config.members[0]
     guild: discord.Guild = config.guilds[0]

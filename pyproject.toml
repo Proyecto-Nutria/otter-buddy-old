@@ -21,11 +21,12 @@ python-dotenv = "0.15.0"
 humanfriendly = "9.1"
 psutil = "5.8.0"
 dnspython = "^2.1.0"
-mock = "^4.0.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 dpytest = "^0.5.2"
+mock = "^4.0.3"
+mongomock = "^3.23.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
