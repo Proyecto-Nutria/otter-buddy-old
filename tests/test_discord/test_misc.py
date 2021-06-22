@@ -55,6 +55,22 @@ async def test_subscribe_command():
     await dpytest.message(f'{constants.PREFIX}subscribe {msg_content}')
     assert dpytest.verify().message().content(expected)
 
+@patch.object(dbconn.DbConn, '__enter__', mock_client)
+@pytest.mark.asyncio
+async def test_unsubscribe_command():
+    expected: str = "You wasn't subscribed"
+    await dpytest.message(f'{constants.PREFIX}unsubscribe')
+    assert dpytest.verify().message().content(expected)
+
+    msg_content: str = "test@test.com"
+    expected: str = "Succesfully subscribed!"
+    await dpytest.message(f'{constants.PREFIX}subscribe {msg_content}')
+    assert dpytest.verify().message().content(expected)
+
+    expected: str = "Succesfully removed your subscription!"
+    await dpytest.message(f'{constants.PREFIX}unsubscribe')
+    assert dpytest.verify().message().content(expected)
+
 @pytest.mark.asyncio
 async def test_pass_role_reaction_event():
     config = dpytest.get_config()
