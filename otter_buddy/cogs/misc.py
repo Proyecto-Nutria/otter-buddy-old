@@ -26,7 +26,7 @@ class Misc(commands.Cog):
         '''
         await ctx.send(content)
 
-    @commands.command(brief="Add your `email` for notifications", usage='<email>')
+    @commands.command(brief="Add your `email` to notifications", usage='<email>')
     async def subscribe(self, ctx, email:str):
         '''
         Subscribe to our notifications via email..
@@ -42,6 +42,19 @@ class Misc(commands.Cog):
             await ctx.send(msg)
         else:
             await ctx.send("Write a valid email")
+
+    @commands.command(brief="Remove your `email` from notifications")
+    async def unsubscribe(self, ctx):
+        '''
+        Unsubscribe from our notifications via email..
+        '''
+        result = db_email.DbEmail.delete_mail(ctx.author.id, ctx.guild.id)
+        msg: str = ""
+        if result.deleted_count == 1:
+            msg = "Succesfully removed your subscription!"
+        else:
+            msg = "You wasn't subscribed"
+        await ctx.send(msg)
 
     @commands.command()
     async def botinfo(self, ctx):
