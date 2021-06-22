@@ -7,7 +7,7 @@ from humanfriendly import format_timespan as timeez
 from psutil import Process, virtual_memory
 
 from otter_buddy import constants
-from otter_buddy.data import dbconn
+from otter_buddy.data import db_email
 from otter_buddy.constants import OTTER_ROLE, WELCOME_MESSAGES
 from otter_buddy.utils.common import is_valid_email
 
@@ -32,7 +32,14 @@ class Misc(commands.Cog):
         Subscribe to our notifications via email..
         '''
         if is_valid_email(email):
-            await ctx.send(email)
+            user = {
+                "user_id": ctx.author.id,
+                "guild_id": ctx.guild.id,
+                "email": email
+            }
+            result = db_email.DbEmail.set_mail(user)
+            msg = "Succesfully subscribed!" if result.matched_count == 0 else "Succesfully updated your subscription!"
+            await ctx.send(msg)
         else:
             await ctx.send("Write a valid email")
 
