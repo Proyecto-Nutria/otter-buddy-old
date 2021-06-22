@@ -16,3 +16,9 @@ class DbEmail:
         with DbConn() as conn:
             result = conn.connection.InterviewBuddy.mails.update_one({ "user_id" : { "$eq": user['user_id'] }, "guild_id" : { "$eq": user['guild_id'] } }, { "$set" : user }, upsert=True)
             return result
+
+    @staticmethod
+    def delete_mail(user_id: int, guild_id: int):
+        with DbConn() as conn:
+            result = conn.connection.InterviewBuddy.mails.delete_one({ "user_id" : { "$eq": user_id }, "guild_id" : { "$eq": guild_id } })
+            return result
