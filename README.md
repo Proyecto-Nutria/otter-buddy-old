@@ -6,6 +6,7 @@ Discord bot to help you to prepare for your interviews.
 ## Features
 
 1. Give Discord role when reacted to messages
+2. Notifications via email
 
 ## Usage
 
