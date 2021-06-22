@@ -19,14 +19,14 @@ class Misc(commands.Cog):
         self.bot = bot
         self.uptime = int(time.time())
 
-    @commands.command(brief="Reply with the `text` wrote", usage='<text>')
+    @commands.command(brief="Reply with the `text` wrote")
     async def echo(self, ctx, *, content:str):
         '''
         Echo will reply your message with the `text` that you wrote next to the command.
         '''
         await ctx.send(content)
 
-    @commands.command(brief="Add your `email` to notifications", usage='<email>')
+    @commands.command(brief="Add your `email` to notifications")
     async def subscribe(self, ctx, email:str):
         '''
         Subscribe to our notifications via email..

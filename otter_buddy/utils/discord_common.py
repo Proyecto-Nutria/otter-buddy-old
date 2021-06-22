@@ -86,7 +86,7 @@ async def bot_error_handler(ctx: discord.ext.commands.Context, error: Exception)
     elif isinstance(error, commands.BadArgument) or isinstance(error, commands.MissingRequiredArgument):
         command = ctx.command
         command.reset_cooldown(ctx)
-        usage = f"`.{str(command)} "
+        usage = f"`{constants.PREFIX}{str(command)} "
         params = []
         for key, value in command.params.items():
             if key not in ['self', 'ctx']:
