@@ -16,6 +16,7 @@ async def bot(event_loop):
     bot = Bot(command_prefix=PREFIX, intents=Intents(members=True, guilds=True))
 
     yield bot
+    
 
 @pytest.fixture(scope="session")
 def logcatch():

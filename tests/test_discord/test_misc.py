@@ -3,9 +3,19 @@ import time
 import discord
 import discord.ext.test as dpytest
 import pytest
+import mongomock
+from unittest.mock import patch
 
 from otter_buddy import constants
 from otter_buddy.cogs import misc
+from otter_buddy.data import dbconn
+
+
+mock_connection = mongomock.MongoClient('mongodb://localhost:27017')
+
+def mock_client(self):
+    self.connection = mock_connection
+    return self
 
 
 @pytest.fixture(autouse=True)
@@ -24,6 +34,42 @@ async def test_echo_command():
     msg_content: str = "This is a test!"
     await dpytest.message(f'{constants.PREFIX}echo {msg_content}')
     assert dpytest.verify().message().content(msg_content)
+
+@pytest.mark.asyncio
+async def test_subscribe_command_invalid_email():
+    msg_content: str = "test.com"
+    expected: str = "Write a valid email"
+    await dpytest.message(f'{constants.PREFIX}subscribe {msg_content}')
+    assert dpytest.verify().message().content(expected)
+
+@patch.object(dbconn.DbConn, '__enter__', mock_client)
+@pytest.mark.asyncio
+async def test_subscribe_command():
+    msg_content: str = "test@test.com"
+    expected: str = "Succesfully subscribed!"
+    await dpytest.message(f'{constants.PREFIX}subscribe {msg_content}')
+    assert dpytest.verify().message().content(expected)
+
+    msg_content: str = "new_test@test.com"
+    expected: str = "Succesfully updated your subscription!"
+    await dpytest.message(f'{constants.PREFIX}subscribe {msg_content}')
+    assert dpytest.verify().message().content(expected)
+
+@patch.object(dbconn.DbConn, '__enter__', mock_client)
+@pytest.mark.asyncio
+async def test_unsubscribe_command():
+    expected: str = "You wasn't subscribed"
+    await dpytest.message(f'{constants.PREFIX}unsubscribe')
+    assert dpytest.verify().message().content(expected)
+
+    msg_content: str = "test@test.com"
+    expected: str = "Succesfully subscribed!"
+    await dpytest.message(f'{constants.PREFIX}subscribe {msg_content}')
+    assert dpytest.verify().message().content(expected)
+
+    expected: str = "Succesfully removed your subscription!"
+    await dpytest.message(f'{constants.PREFIX}unsubscribe')
+    assert dpytest.verify().message().content(expected)
 
 @pytest.mark.asyncio
 async def test_pass_role_reaction_event():

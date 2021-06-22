@@ -1,4 +1,3 @@
-import pymongo
 import mongomock
 from unittest.mock import patch
 
@@ -44,7 +43,28 @@ def test_get_email_valid():
 
 @patch.object(dbconn.DbConn, '__enter__', mock_client)
 def test_get_email_invalid():
-    user_id = 0
+    user_id = 1
+    guild_id = 0
+    result = db_email.DbEmail.get_mail(user_id, guild_id)
+    assert result is None
+
+@patch.object(dbconn.DbConn, '__enter__', mock_client)
+def test_delete_email_valid():
+    user_id = 1
+    guild_id = 1
+    result = db_email.DbEmail.delete_mail(user_id, guild_id)
+    assert result.deleted_count == 1
+
+@patch.object(dbconn.DbConn, '__enter__', mock_client)
+def test_get_email_erased():
+    user_id = 1
     guild_id = 1
     result = db_email.DbEmail.get_mail(user_id, guild_id)
     assert result is None
+
+@patch.object(dbconn.DbConn, '__enter__', mock_client)
+def test_delete_email_invalid():
+    user_id = 1
+    guild_id = 0
+    result = db_email.DbEmail.delete_mail(user_id, guild_id)
+    assert result.deleted_count == 0

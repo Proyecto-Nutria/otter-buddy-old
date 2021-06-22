@@ -7,8 +7,9 @@ from humanfriendly import format_timespan as timeez
 from psutil import Process, virtual_memory
 
 from otter_buddy import constants
-from otter_buddy.data import dbconn
+from otter_buddy.data import db_email
 from otter_buddy.constants import OTTER_ROLE, WELCOME_MESSAGES
+from otter_buddy.utils.common import is_valid_email
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,36 @@ class Misc(commands.Cog):
         Echo will reply your message with the `text` that you wrote next to the command.
         '''
         await ctx.send(content)
+
+    @commands.command(brief="Add your `email` to notifications", usage='<email>')
+    async def subscribe(self, ctx, email:str):
+        '''
+        Subscribe to our notifications via email..
+        '''
+        if is_valid_email(email):
+            user = {
+                "user_id": ctx.author.id,
+                "guild_id": ctx.guild.id,
+                "email": email
+            }
+            result = db_email.DbEmail.set_mail(user)
+            msg = "Succesfully subscribed!" if result.matched_count == 0 else "Succesfully updated your subscription!"
+            await ctx.send(msg)
+        else:
+            await ctx.send("Write a valid email")
+
+    @commands.command(brief="Remove your `email` from notifications")
+    async def unsubscribe(self, ctx):
+        '''
+        Unsubscribe from our notifications via email..
+        '''
+        result = db_email.DbEmail.delete_mail(ctx.author.id, ctx.guild.id)
+        msg: str = ""
+        if result.deleted_count == 1:
+            msg = "Succesfully removed your subscription!"
+        else:
+            msg = "You wasn't subscribed"
+        await ctx.send(msg)
 
     @commands.command()
     async def botinfo(self, ctx):
