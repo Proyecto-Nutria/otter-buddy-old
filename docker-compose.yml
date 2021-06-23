@@ -1,0 +1,39 @@
+version: '3'
+services:
+  otterbuddy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: otterbuddy
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    volumes:
+      - ./:/otter-buddy
+    depends_on:
+      - mongodb
+    networks:
+      - app-tier
+  
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
+      MONGO_INITDB_DATABASE: InterviewBuddy
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /logs/db
+    volumes:
+      - ./data/db:/data/db
+    networks:
+      - app-tier
+
+networks:
+  app-tier:
+    driver: bridge
+
+volumes:
+  mongodbdata:
+    driver: local

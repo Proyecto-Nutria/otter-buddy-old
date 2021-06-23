@@ -14,7 +14,7 @@ documentation = "https://github.com/Proyecto-Nutria/otter-buddy/blob/master/READ
 keywords = ["Bot", "Discord"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 "discord.py" = "^1.7.0"
 pymongo = "3.11.4"
 python-dotenv = "0.15.0"
