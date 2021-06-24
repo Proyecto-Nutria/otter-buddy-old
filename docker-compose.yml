@@ -6,34 +6,31 @@ services:
       dockerfile: Dockerfile
     container_name: otterbuddy
     restart: unless-stopped
-    env_file:
-      - ./.env
+    environment:
+      BOT_TOKEN: "${BOT_TOKEN}"
+      LOGGING_CHANNEL: "${LOGGING_CHANNEL}"
+      WELCOME_MESSAGES: "${WELCOME_MESSAGES}"
+      MONGO_URI: "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/OtterBuddy"
     volumes:
       - ./:/otter-buddy
     depends_on:
       - mongodb
-    networks:
-      - app-tier
+    links:
+      - mongodb
   
   mongodb:
     image: mongo
     container_name: mongodb
     restart: unless-stopped
+    command: mongod --auth
     environment:
-      MONGO_INITDB_ROOT_USERNAME: "${MONGO_USERNAME}"
-      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
-      MONGO_INITDB_DATABASE: InterviewBuddy
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_ROOT_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_ROOT_PASSWORD}"
+      MONGO_INITDB_DATABASE: "OtterBuddy"
+      MONGO_INITDB_USER: "${MONGO_USERNAME}"
+      MONGO_INITDB_PWD: "${MONGO_PASSWORD}"
       MONGODB_DATA_DIR: /data/db
       MONDODB_LOG_DIR: /logs/db
     volumes:
-      - ./data/db:/data/db
-    networks:
-      - app-tier
-
-networks:
-  app-tier:
-    driver: bridge
-
-volumes:
-  mongodbdata:
-    driver: local
+      - ./mongodb/data:/data/db
+      - ./mongodb/entrypoint:/docker-entrypoint-initdb.d/

@@ -138,6 +138,7 @@ dmypy.json
 
 # data
 /data
+/mongodb/data
 
 # logs
 /logs
