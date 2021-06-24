@@ -1,0 +1,36 @@
+version: '3'
+services:
+  otterbuddy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: otterbuddy
+    restart: unless-stopped
+    environment:
+      BOT_TOKEN: "${BOT_TOKEN}"
+      LOGGING_CHANNEL: "${LOGGING_CHANNEL}"
+      WELCOME_MESSAGES: "${WELCOME_MESSAGES}"
+      MONGO_URI: "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/OtterBuddy"
+    volumes:
+      - ./:/otter-buddy
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+  
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: unless-stopped
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_ROOT_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_ROOT_PASSWORD}"
+      MONGO_INITDB_DATABASE: "OtterBuddy"
+      MONGO_INITDB_USER: "${MONGO_USERNAME}"
+      MONGO_INITDB_PWD: "${MONGO_PASSWORD}"
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /logs/db
+    volumes:
+      - ./mongodb/data:/data/db
+      - ./mongodb/entrypoint:/docker-entrypoint-initdb.d/
