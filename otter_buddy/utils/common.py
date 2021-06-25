@@ -47,7 +47,7 @@ def is_valid_email(email: str) -> bool:
         return False
 
 
-def getSize(txt: str, font) -> (int, int):
+def get_size(txt: str, font) -> (int, int):
     testImg = Image.new('RGB', (1, 1))
     testDraw = ImageDraw.Draw(testImg)
     return testDraw.textsize(txt, font)
@@ -65,8 +65,8 @@ def create_match_image(week_otter_pairs: list) -> (Image, str):
     colorBackground = "white"
 
     font = ImageFont.truetype(fontname, fontsize)
-    width, height = getSize(first_column, font)
-    width2, _height2 = getSize(second_column, font)
+    width, height = get_size(first_column, font)
+    width2, _height2 = get_size(second_column, font)
     img = Image.new('RGB', ((width + width2)+20, (height)+20), colorBackground)
     d = ImageDraw.Draw(img)
     d.text((5,5), first_column, fill=colorText, font=font)
