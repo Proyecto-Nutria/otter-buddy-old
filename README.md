@@ -29,7 +29,7 @@ Fill in appropriate variables in new "environment" (`.env`) file.
 
 - **BOT_TOKEN**: the Discord Bot Token for your bot.
 - **LOGGING_CHANNEL**: the [Discord Channel ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) of a Discord Channel where you want error messages sent to.
-- **MONGO_URI**: address of the [MongoDB](https://www.mongodb.com/cloud/atlas) cluster.
+- **MONGO_URI**: address of the [MongoDB](https://docs.mongodb.com/manual/reference/connection-string/) instance to be used, could be local or [Cluster from Atlas](https://www.mongodb.com/cloud/atlas).
 - **WELCOME_MESSAGES**: [`message ids`](https://discord.com/developers/docs/resources/channel#message-object-message-structure) separated by `,` that give `OTTER_ROLE` when reacted to.
 - **OTTER_ADMIN**: Discord role that give access to admin role based commands.
 - **OTTER_MODERATOR**: Discord role that give access to moderator role based commands.
@@ -53,4 +53,33 @@ Modify the constants ([constants file](/otter_buddy/constants.py)) setting prope
 ```sh
 # Run the bot
 poetry run python -m otter_buddy
+```
+
+### Dockerize
+
+If you want to use [`Docker`](https://www.docker.com/), you need to take care of few extra steps.
+
+#### Dependencies
+
+Be sure to have this two technologies installed:
+
+* [Docker Engine](https://docs.docker.com/engine/install/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
+
+#### Environment Variables
+
+Add these variables in "environment" (`.env`) file.
+
+- **MONGO_ROOT_USERNAME**: username to be created as root user with given credentials to manage MongoDB.
+- **MONGO_ROOT_PASSWORD**: strong password to be used as credentials for `MONGO_ROOT_USERNAME`.
+- **MONGO_USERNAME**: user that manage the connections of the application into the database.
+- **MONGO_PASSWORD**: credentials configured to the user of the application.
+
+> :warning: You can omit **MONGO_URI** because will be configured during the creation.
+
+#### Run
+
+```sh
+# Build and run the bot
+docker-compose up -d
 ```
