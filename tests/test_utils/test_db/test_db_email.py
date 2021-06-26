@@ -4,7 +4,7 @@ from unittest.mock import patch
 from otter_buddy.utils.db import db_email, dbconn
 
 
-mock_connection = mongomock.MongoClient('mongodb://localhost:27017')
+mock_connection = mongomock.MongoClient('mongodb://localhost:27019')
 
 def mock_client(self):
     self.connection = mock_connection
