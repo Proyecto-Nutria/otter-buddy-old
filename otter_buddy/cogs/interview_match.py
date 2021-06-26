@@ -7,9 +7,10 @@ from discord.ext import commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
-from otter_buddy.data import db_email
-from otter_buddy.constants import OTTER_ADMIN, OTTER_MODERATOR
+from otter_buddy.utils.db import db_email
+from otter_buddy.utils.email.emailconn import EmailConn
 from otter_buddy.utils.common import create_match_image
+from otter_buddy.constants import OTTER_ADMIN, OTTER_MODERATOR
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +21,9 @@ class InterviewMatch(commands.Cog):
         self.scheduler: AsyncIOScheduler = AsyncIOScheduler()
         self.channel: discord.TextChannel = None
         self.emoji: str = '👍'
-        self.day_of_week: int = 1
         self.message: discord.TextChannel = None
         self.author: discord.User = None
+        self.guild: discord.Guild = None
 
         self.scheduler.start()
 
@@ -46,16 +47,12 @@ class InterviewMatch(commands.Cog):
         week_otter_pool = set()
         for reaction in cache_message.reactions:
             list_users = await reaction.users().flatten()
-            logger.info(list_users)
             for user in list_users:
                 week_otter_pool.add(user)
         week_otter_pool = list(week_otter_pool)
-        logger.info(list(map(lambda user: user.name, week_otter_pool)))
         
         week_otter_pairs = self.make_pairs(week_otter_pool)
-        logger.info(list(map(lambda user: f'{user[0].name} - {user[1].name}', week_otter_pairs)))
         _img, img_path = create_match_image(week_otter_pairs)
-        logger.info(img_path)
         for otter_one, otter_two in week_otter_pairs:
             await self.send_pair_message(otter_one, otter_two)
             await self.send_pair_message(otter_two, otter_one)
@@ -65,16 +62,19 @@ class InterviewMatch(commands.Cog):
     
     async def send_pair_message(self, otter_one: discord.User, otter_two: discord.User):
         username_one = f'{otter_one.name}#{otter_one.discriminator}'
-        logger.info(username_one)
         username_two = f'{otter_two.name}#{otter_two.discriminator}'
-        logger.info(username_two)
         message = (
             f'Hello {username_one}!\n'
             f'You have been paired with {username_two}. Please get in contact with she/he!.\n'
             '*Have fun!*'
         )
-        logger.info(message)
         await otter_one.send(message)
+
+        result = db_email.DbEmail.get_mail(otter_one.id, self.guild.id)
+        if not result is None:
+            email = result['email']
+            conn = EmailConn()
+            conn.send_mail(email, "Interview buddy", message)
     
     def make_pairs(self, week_otter_pool: list):
         week_otter_pairs: list = []
@@ -95,12 +95,6 @@ class InterviewMatch(commands.Cog):
         '''
         Start Interview Match setting up options
         '''
-        if not day_of_week is None:
-            if 0 <= day_of_week <= 6:
-                self.day_of_week = day_of_week
-            else:
-                await ctx.send("Use a number between 0 and 6, where 0 is Monday")
-                return
         get_emoji_message: str = f'You have 15s to react to this message with the emoji that you want to use (by default is {self.emoji}).'
         emoji_message = await ctx.send(get_emoji_message)
 
@@ -116,9 +110,10 @@ class InterviewMatch(commands.Cog):
         
         self.author = ctx.author
         self.channel = channel
+        self.guild = ctx.guild
         self.scheduler.remove_all_jobs()
-        self.scheduler.add_job(self.send_weekly_message, CronTrigger(day_of_week=self.day_of_week, hour=23, minute=53, timezone="America/Mexico_City"))
-        self.scheduler.add_job(self.check_weekly_message, CronTrigger(day_of_week=self.day_of_week, hour=23, minute=54, timezone="America/Mexico_City"))
+        self.scheduler.add_job(self.send_weekly_message, CronTrigger(day_of_week=day_of_week, hour=12, timezone="America/Mexico_City"))
+        self.scheduler.add_job(self.check_weekly_message, CronTrigger(day_of_week=((((day_of_week + 1) % 7) + 7) % 7), hour=12, timezone="America/Mexico_City"))
 
 
 def setup(bot):
