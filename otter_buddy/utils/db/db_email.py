@@ -1,6 +1,6 @@
 import pymongo
 
-from otter_buddy.data.dbconn import DbConn
+from otter_buddy.utils.db.dbconn import DbConn
 
 
 class DbEmail:
