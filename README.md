@@ -31,9 +31,13 @@ Fill in appropriate variables in new "environment" (`.env`) file.
 - **LOGGING_CHANNEL**: the [Discord Channel ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) of a Discord Channel where you want error messages sent to.
 - **MONGO_URI**: address of the [MongoDB](https://docs.mongodb.com/manual/reference/connection-string/) instance to be used, could be local or [Cluster from Atlas](https://www.mongodb.com/cloud/atlas).
 - **WELCOME_MESSAGES**: [`message ids`](https://discord.com/developers/docs/resources/channel#message-object-message-structure) separated by `,` that give `OTTER_ROLE` when reacted to.
+- **MAIL_USER**: email to be used for notifications.
+- **MAIL_PASS**: credentials to access in the email.
 - **OTTER_ADMIN**: Discord role that give access to admin role based commands.
 - **OTTER_MODERATOR**: Discord role that give access to moderator role based commands.
 - **OTTER_ROLE**: Discord role to give when reacted to `WELCOME_MESSAGES`.
+
+> :warning: **Email is configured only for Gmail turning ON [Allow less secure apps](https://myaccount.google.com/lesssecureapps)**
 
 #### Constants
 
