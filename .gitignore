@@ -131,6 +131,7 @@ dmypy.json
 
 # Confidential Information
 *.pdf
+*.png
 !test/test_pdf/*
 
 # Vs code configuration
@@ -139,7 +140,6 @@ dmypy.json
 # data
 /data
 /mongodb/data
-*.png
 
 # logs
 /logs
