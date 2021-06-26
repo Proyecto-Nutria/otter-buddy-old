@@ -23,6 +23,9 @@ class EmailConn(object):
         return self._instance
     
     def send_mail(self, to: str, subject: str, content: str):
+        if not self.mail_user or not self.mail_pass:
+            logger.warn("Email not configured")
+            return
         message = MIMEMultipart()
         message["Subject"] = subject
         message["From"] = self.mail_user

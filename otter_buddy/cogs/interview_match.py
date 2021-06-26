@@ -46,10 +46,18 @@ class InterviewMatch(commands.Cog):
         cache_message = discord.utils.get(self.bot.cached_messages, id=self.message.id)
         week_otter_pool = set()
         for reaction in cache_message.reactions:
+            if reaction.emoji != self.emoji:
+                continue
             list_users = await reaction.users().flatten()
             for user in list_users:
-                week_otter_pool.add(user)
+                if not user.bot:
+                    week_otter_pool.add(user)
+
         week_otter_pool = list(week_otter_pool)
+        if not week_otter_pool:
+            await self.channel.send("No one wanted to practice 😟")
+            logger.warn("Empty pool for Interview Match")
+            return
         
         week_otter_pairs = self.make_pairs(week_otter_pool)
         _img, img_path = create_match_image(week_otter_pairs)
