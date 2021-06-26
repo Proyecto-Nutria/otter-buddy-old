@@ -268,9 +268,9 @@ def test_get_size():
 def test_create_match_image():
     expected_partial_path = "otter_buddy/utils/image.png"
     expected_colors = sorted([
-        (398, (128, 128, 128)),
+        (478, (128, 128, 128)),
         (412, (0, 0, 0)),
-        (11768, (255, 255, 255))
+        (18248, (255, 255, 255))
     ])
 
     week_otter_pairs = [

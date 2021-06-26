@@ -67,12 +67,12 @@ def create_match_image(week_otter_pairs: list) -> (Image, str):
     font = ImageFont.truetype(fontname, fontsize)
     width, height = get_size(first_column, font)
     width2, _height2 = get_size(second_column, font)
-    img = Image.new('RGB', ((width + width2)+20, (height)+20), colorBackground)
+    img = Image.new('RGB', ((width + width2)+100, (height)+20), colorBackground)
     d = ImageDraw.Draw(img)
     d.text((5,5), first_column, fill=colorText, font=font)
-    d.text((width+15,5), second_column, fill=colorText, font=font)
-    d.rectangle((0, 0, width+10, height+20), outline=colorOutline)
-    d.rectangle((width+10, 0, (width + width2)+20, height+20), outline=colorOutline)
+    d.text((width+55,5), second_column, fill=colorText, font=font)
+    d.rectangle((0, 0, width+50, height+20), outline=colorOutline)
+    d.rectangle((width+50, 0, (width + width2)+100, height+20), outline=colorOutline)
 
     path = os.path.dirname(os.path.realpath(__file__)) + "/image.png"    
     img.save(path)
