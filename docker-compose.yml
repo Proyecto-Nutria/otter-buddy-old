@@ -11,6 +11,8 @@ services:
       LOGGING_CHANNEL: "${LOGGING_CHANNEL}"
       WELCOME_MESSAGES: "${WELCOME_MESSAGES}"
       MONGO_URI: "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/OtterBuddy"
+      MAIL_USER: "${MAIL_USER}"
+      MAIL_PASS: "${MAIL_PASS}"
     volumes:
       - ./:/otter-buddy
     depends_on:
