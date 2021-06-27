@@ -18,7 +18,8 @@ class EmailConn(object):
         if self._instance is None:
             load_dotenv()
             self.mail_user = MAIL_USER
-            self.mail_pass = os.environ.get("MAIL_PASS")
+            self.mail_pass = os.environ.get("MAIL_PASS", "password")
+            print(self.mail_pass)
             self._instance = super(EmailConn, self).__new__(self)
         
         return self._instance
