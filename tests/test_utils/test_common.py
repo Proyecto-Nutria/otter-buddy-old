@@ -1,6 +1,14 @@
 import time
+import os
+
+from PIL import Image, ImageDraw, ImageFont
+
+import discord
+import discord.ext.test as dpytest
 
 from otter_buddy.utils.common import *
+from otter_buddy.constants import FONT_PATH
+
 
 def test_time_format_seconds():
     seconds = 1
@@ -238,3 +246,46 @@ def test_invalid_email():
 
     email = "test@test.com!"
     assert not is_valid_email(email)
+
+def test_get_size():
+    print(os.path.dirname(os.path.abspath(__file__)))
+    print(os.path.abspath(os.getcwd()))
+    print(FONT_PATH)
+
+    text = "This is a test!"
+    size = 16
+    font = ImageFont.truetype(FONT_PATH, size)
+    width, height = get_size(text, font)
+    assert width == 100
+    assert height == 17
+
+    size = 10
+    font = ImageFont.truetype(FONT_PATH, size)
+    width, height = get_size(text, font)
+    assert width == 63
+    assert height == 11
+
+    text = text + "\n" + text
+    width, height = get_size(text, font)
+    assert width == 63
+    assert height == 24
+
+def test_create_match_image():
+    expected_partial_path = "otter_buddy/utils/image.png"
+    expected_colors = sorted([
+        (444, (128, 128, 128)),
+        (394, (0, 0, 0)),
+        (17092, (255, 255, 255))
+    ])
+
+    week_otter_pairs = [
+        (dpytest.backend.make_user("test1", "0001"), dpytest.backend.make_user("test2", "0002")),
+        (dpytest.backend.make_user("test3", "0003"), dpytest.backend.make_user("test4", "0004")),
+        (dpytest.backend.make_user("test5", "0005"), dpytest.backend.make_user("test6", "0006"))
+    ]
+
+    img, path = create_match_image(week_otter_pairs)
+    assert expected_partial_path in path
+
+    img_colors = sorted(img.getcolors())
+    assert img_colors[-3:] == expected_colors

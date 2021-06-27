@@ -13,15 +13,26 @@ class Help(commands.Cog):
 
     def make_help_embed(self, ctx):
         headers = "Information about commands are given below!\nFor general information about the bot,  type `{}botinfo`".format(PREFIX)
-        echo = self.client.get_command('echo')
-        footers = "\n```cpp\nReact to change pages\nPage 1: Handle related commands```"
+        misc = ['echo', 'subscribe', 'unsubscribe']
+        interview_match = self.client.get_command('interview_match')
+        footers = "\n```cpp\nReact to change pages"
 
 
         content = []
-        desc = "\n\n:otter: Misc related commands\n\n"
-        desc += f"`{echo.name}`: **{echo.brief}**\n"
-        content.append(desc)
 
+        desc = "\n\n:otter: Misc related commands\n\n"
+        for cmd in list(map(lambda name: self.client.get_command(name), misc)):
+            desc += f"`{cmd.name}`: **{cmd.brief}**\n"
+        content.append(desc)
+        footers += "\nPage 1: Misc related commands"
+        
+        desc = "\n\n:otter: Interview Match related commands\n\n"
+        for cmd in interview_match.commands:
+            desc += f"`{cmd.name}`: **{cmd.brief}**\n"
+        content.append(desc)
+        footers += "\nPage 2: Interview Match related commands"
+
+        footers += "```"
         embeds = []
         for desc in content:
             embed = discord.Embed(description=headers + desc + footers, color=BRAND_COLOR)
@@ -52,7 +63,7 @@ class Help(commands.Cog):
         """Shows help for various commands"""
         if cmd is None:
             embeds = self.make_help_embed(ctx)
-            emotes = ['1⃣']
+            emotes = ['1⃣', '2⃣']
             msg = await ctx.send(embed=embeds[0])
             for emote in emotes:
                 await msg.add_reaction(emote)
@@ -73,7 +84,7 @@ class Help(commands.Cog):
         else:
             command = self.client.get_command(cmd)
             if command is None or command.hidden:
-                await ctx.send(f"{ctx.author.mention} that command does not exists")
+                await ctx.author.send(f"{ctx.author.mention} that command does not exists")
                 return
             await ctx.send(embed=self.make_cmd_embed(command))
 

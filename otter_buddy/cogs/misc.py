@@ -7,7 +7,7 @@ from humanfriendly import format_timespan as timeez
 from psutil import Process, virtual_memory
 
 from otter_buddy import constants
-from otter_buddy.data import db_email
+from otter_buddy.utils.db import db_email
 from otter_buddy.constants import OTTER_ROLE, WELCOME_MESSAGES
 from otter_buddy.utils.common import is_valid_email
 

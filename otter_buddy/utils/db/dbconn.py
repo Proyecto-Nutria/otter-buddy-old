@@ -1,8 +1,6 @@
 import pymongo
 import os
-import time
 
-from collections import namedtuple
 from dotenv import load_dotenv
 
 

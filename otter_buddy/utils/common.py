@@ -2,6 +2,11 @@ import logging
 import math
 import time
 import re
+import os
+
+from PIL import Image, ImageDraw, ImageFont
+
+from otter_buddy.constants import FONT_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -42,3 +47,36 @@ def is_valid_email(email: str) -> bool:
         return True  
     else:   
         return False
+
+
+def get_size(txt: str, font) -> (int, int):
+    testImg = Image.new('RGB', (1, 1))
+    testDraw = ImageDraw.Draw(testImg)
+    return testDraw.textsize(txt, font)
+
+def create_match_image(week_otter_pairs: list) -> (Image, str):
+
+    first_list, second_list = zip(*week_otter_pairs)
+    first_column = "\n".join(list(map(lambda user: f"{user.name}#{user.discriminator}", first_list)))
+    second_column = "\n".join(list(map(lambda user: f"{user.name}#{user.discriminator}", second_list)))
+    
+    colorText = "black"
+    colorOutline = "gray"
+    colorBackground = "white"
+
+    fontsize = 16
+    font = ImageFont.truetype(FONT_PATH, fontsize)
+
+    width, height = get_size(first_column, font)
+    width2, _height2 = get_size(second_column, font)
+    img = Image.new('RGB', ((width + width2)+100, (height)+20), colorBackground)
+    d = ImageDraw.Draw(img)
+    d.text((5,5), first_column, fill=colorText, font=font)
+    d.text((width+55,5), second_column, fill=colorText, font=font)
+    d.rectangle((0, 0, width+50, height+20), outline=colorOutline)
+    d.rectangle((width+50, 0, (width + width2)+100, height+20), outline=colorOutline)
+
+    path = os.path.dirname(os.path.realpath(__file__)) + "/image.png"    
+    img.save(path)
+
+    return img, path

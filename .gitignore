@@ -131,6 +131,7 @@ dmypy.json
 
 # Confidential Information
 *.pdf
+*.png
 !test/test_pdf/*
 
 # Vs code configuration

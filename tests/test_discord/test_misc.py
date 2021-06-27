@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from otter_buddy import constants
 from otter_buddy.cogs import misc
-from otter_buddy.data import dbconn
+from otter_buddy.utils.db import dbconn
 
 
 mock_connection = mongomock.MongoClient('mongodb://localhost:27017')
