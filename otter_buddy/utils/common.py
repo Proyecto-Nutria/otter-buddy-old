@@ -6,6 +6,8 @@ import os
 
 from PIL import Image, ImageDraw, ImageFont
 
+from otter_buddy.constants import FONT_PATH
+
 logger = logging.getLogger(__name__)
 
 # Based on RFC 5322 Official Standard
@@ -53,8 +55,6 @@ def get_size(txt: str, font) -> (int, int):
     return testDraw.textsize(txt, font)
 
 def create_match_image(week_otter_pairs: list) -> (Image, str):
-    fontname = "OpenSans-Regular.ttf"
-    fontsize = 16
 
     first_list, second_list = zip(*week_otter_pairs)
     first_column = "\n".join(list(map(lambda user: f"{user.name}#{user.discriminator}", first_list)))
@@ -64,7 +64,9 @@ def create_match_image(week_otter_pairs: list) -> (Image, str):
     colorOutline = "gray"
     colorBackground = "white"
 
-    font = ImageFont.truetype(fontname, fontsize)
+    fontsize = 16
+    font = ImageFont.truetype(FONT_PATH, fontsize)
+
     width, height = get_size(first_column, font)
     width2, _height2 = get_size(second_column, font)
     img = Image.new('RGB', ((width + width2)+100, (height)+20), colorBackground)

@@ -1,4 +1,5 @@
 import time
+import os
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -6,8 +7,8 @@ import discord
 import discord.ext.test as dpytest
 
 from otter_buddy.utils.common import *
+from otter_buddy.constants import FONT_PATH
 
-FONT_PATH = "tests/fonts/OpenSans-Regular.ttf"
 
 def test_time_format_seconds():
     seconds = 1
@@ -247,30 +248,34 @@ def test_invalid_email():
     assert not is_valid_email(email)
 
 def test_get_size():
+    print(os.path.dirname(os.path.abspath(__file__)))
+    print(os.path.abspath(os.getcwd()))
+    print(FONT_PATH)
+
     text = "This is a test!"
     size = 16
     font = ImageFont.truetype(FONT_PATH, size)
     width, height = get_size(text, font)
-    assert width == 96
-    assert height == 18
+    assert width == 100
+    assert height == 17
 
     size = 10
     font = ImageFont.truetype(FONT_PATH, size)
     width, height = get_size(text, font)
-    assert width == 60
+    assert width == 63
     assert height == 11
 
     text = text + "\n" + text
     width, height = get_size(text, font)
-    assert width == 60
-    assert height == 26
+    assert width == 63
+    assert height == 24
 
 def test_create_match_image():
     expected_partial_path = "otter_buddy/utils/image.png"
     expected_colors = sorted([
-        (478, (128, 128, 128)),
-        (412, (0, 0, 0)),
-        (18248, (255, 255, 255))
+        (444, (128, 128, 128)),
+        (394, (0, 0, 0)),
+        (17092, (255, 255, 255))
     ])
 
     week_otter_pairs = [
