@@ -102,6 +102,8 @@ async def bot_error_handler(ctx: discord.ext.commands.Context, error: Exception)
         await ctx.author.send(embed=embed_alert('Commands are disabled in private channels'))
     elif isinstance(error, commands.DisabledCommand):
         await ctx.author.send(embed=embed_alert('Sorry, this command is temporarily disabled'))
+    elif isinstance(error, commands.CommandNotFound):
+        await ctx.author.send(embed=embed_alert('Oops! Looks like your command doesn\' exist, type `&help` to learn more'))
     else:
         msg = 'Ignoring exception in command {}:'.format(ctx.command)
         exc_info = type(error), error, error.__traceback__
