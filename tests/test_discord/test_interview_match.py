@@ -36,6 +36,8 @@ async def test_send_weekly_message(interview_match_cog):
     guild: discord.Guild = config.guilds[0]
     channel: discord.TextChannel = config.channels[0]
     member: discord.Member = config.members[0]
+    role: discord.Role = dpytest.backend.make_role(name=constants.OTTER_ROLE, guild=guild)
+    dpytest.backend.update_guild(guild=guild, roles=guild.roles.extend([role]))
     interview_match = {
         "emoji":            '👍',
         "day_of_the_week":  datetime.datetime.today().weekday(),
@@ -52,6 +54,7 @@ async def test_send_weekly_message(interview_match_cog):
     assert result['message_id'] is not None
 
     expected: str = (
+        f'{role.mention if role else ""}\n'
         'Hello my beloved otters, it is time to practice!\n'
         f'React to this message with 👍 if you want to make a mock interview with another otter.\n'
         'Remeber you only have 24 hours to react. A nice week to all of you and keep coding!'

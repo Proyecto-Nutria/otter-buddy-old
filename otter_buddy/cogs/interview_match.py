@@ -11,7 +11,7 @@ from apscheduler.triggers.cron import CronTrigger
 from otter_buddy.utils.db import db_email, db_interview_match
 from otter_buddy.utils.email.emailconn import EmailConn
 from otter_buddy.utils.common import create_match_image
-from otter_buddy.constants import OTTER_ADMIN, OTTER_MODERATOR
+from otter_buddy.constants import OTTER_ADMIN, OTTER_MODERATOR, OTTER_ROLE
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,25 @@ class InterviewMatch(commands.Cog):
     async def send_weekly_message(self):
         weekday = datetime.datetime.today().weekday()
         for entry in db_interview_match.DbInterviewMatch.get_day_interview_match(weekday):
+            guild: discord.Guild = None
+            role: discord.Role = None
+            try:
+                guild = next(guild for guild in self.bot.guilds if guild.id == entry["guild_id"])
+                role = discord.utils.get(guild.roles, name=OTTER_ROLE)
+                if role == None:
+                    logger.error(f"Not role found in {__name__} for guild {guild.name}")
+                    return
+            except StopIteration:
+                logger.error(f"Not guild found in {__name__}")
+            except discord.Forbidden:
+                logger.error(f"Not permissions to add the role in {__name__}")
+            except discord.HTTPException:
+                logger.error(f"Adding roles failed in {__name__}")
+            except Exception as e:
+                logger.error(f"Exception in {__name__}")
+                logger.error(e)
             interview_buddy_message: str = (
+                f'{role.mention if role else ""}\n'
                 'Hello my beloved otters, it is time to practice!\n'
                 f'React to this message with {entry["emoji"]} if you want to make a mock interview with another otter.\n'
                 'Remeber you only have 24 hours to react. A nice week to all of you and keep coding!'
