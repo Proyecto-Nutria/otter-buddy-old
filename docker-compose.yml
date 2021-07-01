@@ -13,6 +13,9 @@ services:
       MONGO_URI: "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/OtterBuddy"
       MAIL_USER: "${MAIL_USER}"
       MAIL_PASS: "${MAIL_PASS}"
+      OTTER_ADMIN: "${OTTER_ADMIN}"
+      OTTER_MODERATOR: "${OTTER_MODERATOR}"
+      OTTER_ROLE: "${OTTER_ROLE}"
     volumes:
       - ./:/otter-buddy
     depends_on:
@@ -21,7 +24,7 @@ services:
       - mongodb
   
   mongodb:
-    image: mongo:5.0-rc-focal
+    image: mongo:4.4
     container_name: mongodb
     restart: unless-stopped
     command: mongod --auth
