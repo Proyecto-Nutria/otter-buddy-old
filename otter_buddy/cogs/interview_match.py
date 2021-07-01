@@ -50,23 +50,20 @@ class InterviewMatch(commands.Cog):
                     return
             except StopIteration:
                 logger.error(f"Not guild found in {__name__}")
-            except discord.Forbidden:
-                logger.error(f"Not permissions to add the role in {__name__}")
-            except discord.HTTPException:
-                logger.error(f"Adding roles failed in {__name__}")
             except Exception as e:
                 logger.error(f"Exception in {__name__}")
                 logger.error(e)
-            interview_buddy_message: str = (
-                f'{role.mention if role else ""}\n'
-                'Hello my beloved otters, it is time to practice!\n'
-                f'React to this message with {entry["emoji"]} if you want to make a mock interview with another otter.\n'
-                'Remeber you only have 24 hours to react. A nice week to all of you and keep coding!'
-            )
-            channel = self.bot.get_channel(entry["channel_id"])
-            message = await channel.send(interview_buddy_message)
-            entry["message_id"] = message.id
-            db_interview_match.DbInterviewMatch.set_interview_match(entry)
+            finally:
+                interview_buddy_message: str = (
+                    f'{role.mention if role else ""}\n'
+                    'Hello my beloved otters, it is time to practice!\n'
+                    f'React to this message with {entry["emoji"]} if you want to make a mock interview with another otter.\n'
+                    'Remeber you only have 24 hours to react. A nice week to all of you and keep coding!'
+                )
+                channel = self.bot.get_channel(entry["channel_id"])
+                message = await channel.send(interview_buddy_message)
+                entry["message_id"] = message.id
+                db_interview_match.DbInterviewMatch.set_interview_match(entry)
     
     async def check_weekly_message(self):
         weekday = (datetime.datetime.today().weekday() - 1 + 7) % 7
@@ -87,7 +84,7 @@ class InterviewMatch(commands.Cog):
             if not week_otter_pool:
                 await channel.send("No one wanted to practice 😟")
                 logger.warning("Empty pool for Interview Match")
-                return
+                continue
             
             week_otter_pairs = self.make_pairs(week_otter_pool, entry["author_id"])
             _img, img_path = create_match_image(week_otter_pairs)
