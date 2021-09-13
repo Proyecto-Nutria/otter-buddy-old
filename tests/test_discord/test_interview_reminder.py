@@ -50,11 +50,12 @@ async def test_send_weekly_message(interview_reminder_cog):
 
     await interview_reminder_cog.send_scheduled_message()
 
-    expected: str = (
+    reminder_message: str = (
         f'{role.mention}\n'
         f'{message}'
     )
-    assert dpytest.verify().message().content(expected)
+    expected = discord.Embed(description=reminder_message, color=constants.BRAND_COLOR)
+    assert dpytest.verify().message().embed(expected)
 
     db_interview_reminder.DbInterviewReminder.delete_interview_reminder(guild.id)
 
@@ -85,7 +86,7 @@ async def test_succesfully_stop(interview_reminder_cog):
     extended_roles = user.roles
     extended_roles.append(role)
     dpytest.backend.update_member(member=user, roles=extended_roles)
-    expected: str = "**Interview Reminder** activity stopped!"
+    expected: str = "**Interview Reminder** stopped!"
     await dpytest.message(f'{constants.PREFIX}interview_reminder stop', channel=channel, member=user)
     assert dpytest.verify().message().content(expected)
 

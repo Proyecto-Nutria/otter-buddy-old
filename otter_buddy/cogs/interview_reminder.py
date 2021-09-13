@@ -1,6 +1,4 @@
-import random
 import discord
-import asyncio
 import logging
 import datetime
 
@@ -8,10 +6,8 @@ from discord.ext import commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
-from otter_buddy.utils.db import db_email, db_interview_reminder
-from otter_buddy.utils.email.emailconn import EmailConn
-from otter_buddy.utils.common import create_match_image
-from otter_buddy.constants import OTTER_ADMIN, OTTER_MODERATOR, OTTER_ROLE
+from otter_buddy.utils.db import db_interview_reminder
+from otter_buddy.constants import OTTER_ADMIN, OTTER_MODERATOR, BRAND_COLOR
 
 logger = logging.getLogger(__name__)
 
@@ -51,8 +47,9 @@ class InterviewReminder(commands.Cog):
                     f'{entry["role_mention"]}\n'
                     f'{entry["message"]}'
                 )
+                embed = discord.Embed(description=reminder_message, color=BRAND_COLOR)
                 channel = self.bot.get_channel(entry["channel_id"])
-                await channel.send(reminder_message)
+                await channel.send(embed=embed)
 
     @interview_reminder.command(brief='Start interview reminder', usage='<text_channel> [message_id] [role] [day_of_week]')
     @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
@@ -76,7 +73,7 @@ class InterviewReminder(commands.Cog):
 
         await ctx.send(f"**Interview Reminder** scheduled! Let me do the boring job.")
 
-    @interview_reminder.command(brief='Stop interview match activity')
+    @interview_reminder.command(brief='Stop interview reminder')
     @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
     async def stop(self, ctx):
         '''
@@ -85,7 +82,7 @@ class InterviewReminder(commands.Cog):
         result = db_interview_reminder.DbInterviewReminder.delete_interview_reminder(ctx.guild.id)
         msg: str = ""
         if result.deleted_count == 1:
-            msg = "**Interview Reminder** activity stopped!"
+            msg = "**Interview Reminder** stopped!"
         else:
             msg = "No reminder was set! 😱"
         await ctx.send(msg)
