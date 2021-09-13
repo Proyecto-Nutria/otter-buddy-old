@@ -15,6 +15,7 @@ class Help(commands.Cog):
         headers = "Information about commands are given below!\nFor general information about the bot,  type `{}botinfo`".format(PREFIX)
         misc = ['echo', 'subscribe', 'unsubscribe']
         interview_match = self.client.get_command('interview_match')
+        interview_reminder = self.client.get_command('interview_reminder')
         footers = "\n```cpp\nReact to change pages"
 
 
@@ -31,6 +32,12 @@ class Help(commands.Cog):
             desc += f"`{cmd.name}`: **{cmd.brief}**\n"
         content.append(desc)
         footers += "\nPage 2: Interview Match related commands"
+        
+        desc = "\n\n:otter: Interview Reminder related commands\n\n"
+        for cmd in interview_reminder.commands:
+            desc += f"`{cmd.name}`: **{cmd.brief}**\n"
+        content.append(desc)
+        footers += "\nPage 3: Interview Reminder related commands"
 
         footers += "```"
         embeds = []
@@ -63,7 +70,7 @@ class Help(commands.Cog):
         """Shows help for various commands"""
         if cmd is None:
             embeds = self.make_help_embed(ctx)
-            emotes = ['1⃣', '2⃣']
+            emotes = ['1️⃣', '2️⃣', '3️⃣']
             msg = await ctx.send(embed=embeds[0])
             for emote in emotes:
                 await msg.add_reaction(emote)
