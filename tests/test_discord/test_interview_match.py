@@ -110,8 +110,10 @@ async def test_send_pair_message(interview_match_cog):
     expected_subject = "Interview buddy"
     expected_message = (
         f'Hello {username_one}!\n'
-        f'You have been paired with {username_two}. Please get in contact with she/he!.\n'
-        '*Have fun!*'
+        f'You have been paired with {username_two}. Please get in contact with her/him and don\'t forget to request the resume!.\n'
+        '*Have fun!*\n\n'
+        'Check this message for more information about the activity:\n'
+        'https://discord.com/channels/742890088190574634/743138942035034164/859236992403374110'
     )
     expected_email = EmailMessage()
     expected_email.set_content(expected_message)
