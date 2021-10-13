@@ -105,7 +105,11 @@ class InterviewMatch(commands.Cog):
             'Check this message for more information about the activity:\n'
             'https://discord.com/channels/742890088190574634/743138942035034164/859236992403374110'
         )
-        await otter_one.send(message)
+        try:
+            await otter_one.send(message)
+        except BaseException as err:
+            logger.error(f'Error while sending a message to {username_one}')
+            logger.error(f"Unexpected {err=}, {type(err)=}")
 
         result = db_email.DbEmail.get_mail(otter_one.id, guild_id)
         if not result is None:
