@@ -57,8 +57,8 @@ def get_size(txt: str, font) -> (int, int):
 def create_match_image(week_otter_pairs: list) -> (Image, str):
 
     first_list, second_list = zip(*week_otter_pairs)
-    first_column = "\n".join(list(map(lambda user: f"{user.name}#{user.discriminator}", first_list)))
-    second_column = "\n".join(list(map(lambda user: f"{user.name}#{user.discriminator}", second_list)))
+    first_column = "\n".join(list(map(lambda user: f"{user.display_name}#{user.discriminator}", first_list)))
+    second_column = "\n".join(list(map(lambda user: f"{user.display_name}#{user.discriminator}", second_list)))
     
     colorText = "black"
     colorOutline = "gray"
