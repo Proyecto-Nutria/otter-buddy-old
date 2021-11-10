@@ -85,6 +85,15 @@ class Misc(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @commands.command(brief='Create invites that last 7 days for server', usage='<text_channel> [number_of_invitations]')
+    @commands.has_role(constants.OTTER_ADMIN)
+    async def invite(self, ctx, channel: discord.TextChannel, number: int = None):
+        invitations = []
+        for _ in range(1 if number is None else number):
+            invitation = await channel.create_invite(max_age=604800, max_uses=1, unique=True)
+            invitations.append(f'<{invitation.url}>')
+        await ctx.author.send("\n".join(invitations))
+
     @commands.Cog.listener(name='on_raw_reaction_add')
     async def reaction_give_role(self, payload: discord.RawReactionActionEvent):
         if not WELCOME_MESSAGES or str(payload.message_id) in WELCOME_MESSAGES:
