@@ -93,6 +93,7 @@ class InterviewMatch(commands.Cog):
                 await self.send_pair_message(otter_one, otter_two, entry["guild_id"])
                 await self.send_pair_message(otter_two, otter_one, entry["guild_id"])
 
+            week_otter_pool.sort(key=lambda user: user.display_name) # in-place sort
             users_mentions = ",".join(list(map(lambda user: f"{user.mention}", week_otter_pool)))
             message = 'These are the pairs of the week.\nPlease get in touch with your partner!'
             message += f'\n{users_mentions}'
