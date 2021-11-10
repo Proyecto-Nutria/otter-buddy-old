@@ -159,7 +159,7 @@ async def test_make_pairs_incomplete(interview_match_cog):
 
     week_otter_pool = [otter_two]
 
-    result = interview_match_cog.make_pairs(week_otter_pool, otter_one.id)
+    result = interview_match_cog.make_pairs(week_otter_pool, otter_one)
     result_flatten = [item.id for tup in result for item in tup]
     result_flatten.sort()
     expected_list = [otter_one.id, otter_two.id]

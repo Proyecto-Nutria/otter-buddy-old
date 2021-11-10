@@ -86,7 +86,8 @@ class InterviewMatch(commands.Cog):
                 logger.warning("Empty pool for Interview Match")
                 continue
             
-            week_otter_pairs = self.make_pairs(week_otter_pool, entry["author_id"])
+            placeholder = channel.guild.get_member(entry["author_id"])
+            week_otter_pairs = self.make_pairs(week_otter_pool, placeholder)
             _img, img_path = create_match_image(week_otter_pairs)
             for otter_one, otter_two in week_otter_pairs:
                 await self.send_pair_message(otter_one, otter_two, entry["guild_id"])
@@ -117,13 +118,10 @@ class InterviewMatch(commands.Cog):
             conn = EmailConn()
             conn.send_mail(email, "Interview buddy", message)
     
-    def make_pairs(self, week_otter_pool: list, author_id: int):
+    def make_pairs(self, week_otter_pool: list, placeholder: discord.Member):
         week_otter_pairs: list = []
         if len(week_otter_pool) % 2 == 1:
-            print("Hello")
-            author = self.bot.get_user(author_id)
-            print(author)
-            week_otter_pool.append(author)
+            week_otter_pool.append(placeholder)
         
         random.shuffle(week_otter_pool)
         for idx in range(len(week_otter_pool) // 2):
