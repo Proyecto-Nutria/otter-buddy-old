@@ -136,18 +136,19 @@ class Misc(commands.Cog):
                 try:
                     users_list = await reaction.users().flatten()
                     users.update(users_list)
-                    for user in users:
-                        try:
-                            await discord.Member.add_roles(user, role)
-                        except discord.Forbidden:
-                            logger.error(f"Not permissions to add the role for user {user.id} in {__name__}")
-                        except discord.HTTPException:
-                            logger.error(f"Adding roles for user {user.id} failed in {__name__}")
-                        except Exception as e:
-                            logger.error(f"Exception in {__name__}")
-                            logger.error(e)
                 except discord.HTTPException:
                     logger.error(f"Retrieving the list of users for message with id {message_id} with reaction {reaction.emoji} failed in {__name__}")
+            logger.info(f"Got {len(users)} to add role")
+            for user in users:
+                try:
+                    await discord.Member.add_roles(user, role)
+                except discord.Forbidden:
+                    logger.error(f"Not permissions to add the role for user {user.id} in {__name__}")
+                except discord.HTTPException:
+                    logger.error(f"Adding roles for user {user.id} failed in {__name__}")
+                except Exception as e:
+                    logger.error(f"Exception with {user.display_name} in {__name__}")
+                    logger.error(e)
 
 
 def setup(bot):
