@@ -8,7 +8,7 @@ from psutil import Process, virtual_memory
 
 from otter_buddy import constants
 from otter_buddy.utils.db import db_email
-from otter_buddy.constants import OTTER_ROLE, WELCOME_MESSAGES
+from otter_buddy.constants import OTTER_ADMIN, OTTER_MODERATOR, OTTER_ROLE, WELCOME_MESSAGES
 from otter_buddy.utils.common import is_valid_email
 
 logger = logging.getLogger(__name__)
@@ -104,6 +104,47 @@ class Misc(commands.Cog):
             except Exception as e:
                 logger.error(f"Exception in {__name__}")
                 logger.error(e)
+
+    @commands.command()
+    @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
+    async def reactioncheck(self, ctx):
+        role = discord.utils.get(ctx.guild.roles, name=OTTER_ROLE)
+        if role == None:
+            logger.error(f"Not role found in {__name__} for guild {ctx.guild.name}")
+            return
+        for message_id in WELCOME_MESSAGES:
+            message = None
+            for text_channel in ctx.guild.text_channels:
+                try:
+                    message = await text_channel.fetch_message(message_id)
+                    break
+                except discord.NotFound:
+                    continue
+                except discord.Forbidden:
+                    logger.error(f"Not permissions to get the message with id {message_id} in {__name__}")
+                except discord.HTTPException:
+                    logger.error(f"Retrieving the message with id {message_id} failed in {__name__}")
+                except Exception as e:
+                    logger.error(f"Exception in {__name__}")
+                    logger.error(e)
+            if not message:
+                logger.error(f"The specified message with id {message_id} was not found in {__name__}")
+                return
+
+            users = set()
+            for reaction in message.reactions:
+                try:
+                    users_list = await reaction.users().flatten()
+                    users.update(users_list)
+                    for user in users:
+                        try:
+                            await discord.Member.add_roles(user, role)
+                        except discord.Forbidden:
+                            logger.error(f"Not permissions to add the role for user {user.id} in {__name__}")
+                        except discord.HTTPException:
+                            logger.error(f"Adding roles for user {user.id} failed in {__name__}")
+                except discord.HTTPException:
+                    logger.error(f"Retrieving the list of users for message with id {message_id} with reaction {reaction.emoji} failed in {__name__}")
 
 
 def setup(bot):
