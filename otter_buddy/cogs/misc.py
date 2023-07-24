@@ -46,7 +46,7 @@ class Misc(commands.Cog):
     @commands.command(brief="Remove your `email` from notifications")
     async def unsubscribe(self, ctx):
         '''
-        Unsubscribe from our notifications via email..
+        Unsubscribe from our notifications via email
         '''
         result = db_email.DbEmail.delete_mail(ctx.author.id, ctx.guild.id)
         msg: str = ""
