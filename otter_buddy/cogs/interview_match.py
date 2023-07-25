@@ -63,8 +63,6 @@ class InterviewMatch(commands.Cog):
                     'Remeber you only have 24 hours to react. A nice week to all of you and keep coding!'
                 )
                 channel = self.bot.get_channel(entry["channel_id"])
-                logger.info(entry["channel_id"])
-                logger.info(channel)
                 message = await channel.send(interview_buddy_message)
                 entry["message_id"] = message.id
                 db_interview_match.DbInterviewMatch.set_interview_match(entry)
