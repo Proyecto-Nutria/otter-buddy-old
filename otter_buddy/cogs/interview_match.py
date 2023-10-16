@@ -69,6 +69,15 @@ class InterviewMatch(commands.Cog):
     
     async def check_weekly_message(self, weekday = None) -> None:
         weekday = (datetime.datetime.today().weekday() - 1 + 7) % 7 if weekday is None else weekday
+        """
+        Above operation:
+        datetime.datetime.today().weekday() is used to obtain the current day of the week as a number, 
+        where 0 represents Monday, and 6 represents Sunday.
+
+        The code subtracts 1 from the current day of the week, effectively making Monday (0) become -1 (undefined). 
+        Then, it adds 7 and takes the modulo 7 to ensure that the resulting value is in the range of 0 to 6, which represents the days of the week. 
+        This guarantees that you get the previous day of the week.
+        """
         for entry in db_interview_match.DbInterviewMatch.get_day_interview_match(weekday):
             logger.info(entry)
             channel = self.bot.get_channel(entry["channel_id"])
@@ -131,8 +140,8 @@ class InterviewMatch(commands.Cog):
             week_otter_pool.append(placeholder)
 
         for otter in week_otter_pool:
-            str_otter_roles = [str(otter_role) for otter_role in otter.roles]
-            if OTTER_MODERATOR in str_otter_roles or OTTER_ADMIN in str_otter_roles:
+            otter_roles = [str(otter_role) for otter_role in otter.roles]
+            if OTTER_MODERATOR in otter_roles or OTTER_ADMIN in otter_roles:
                 week_otter_collaborator.append(otter)
             else:
                 week_otter_member.append(otter)
@@ -140,17 +149,22 @@ class InterviewMatch(commands.Cog):
         random.shuffle(week_otter_collaborator)
         random.shuffle(week_otter_member)
 
-        for collaborator, member in list(zip(week_otter_collaborator, week_otter_member)):
-            week_otter_pairs.append((collaborator, member))
-            week_otter_collaborator.remove(collaborator)
-            week_otter_member.remove(member)
-        
-        for idx in range(len(week_otter_collaborator) // 2):
-            week_otter_pairs.append((week_otter_collaborator[idx*2], week_otter_collaborator[idx*2+1]))
-        
-        for idx in range(len(week_otter_member) // 2):
-            week_otter_pairs.append((week_otter_member[idx*2], week_otter_member[idx*2+1]))
+        # Pair interviewees with colaborators
+        collaborator_index = 0
+        member_index = 0
+        while collaborator_index < len(week_otter_collaborator) and member_index < len(week_otter_member):
+            week_otter_pairs.append((week_otter_collaborator[collaborator_index], week_otter_member[member_index]))
+            collaborator_index += 1
+            member_index += 1
 
+        # Pair aditional colaborators
+        for idx in range(collaborator_index, len(week_otter_collaborator), 2):
+            week_otter_pairs.append((week_otter_collaborator[idx], week_otter_collaborator[idx + 1]))
+
+        # Pair aditional members
+        for idx in range(member_index, len(week_otter_member), 2):
+            week_otter_pairs.append((week_otter_member[idx], week_otter_member[idx + 1]))
+        
         return week_otter_pairs
 
     @interview_match.command(brief='Start interview match activity', usage='<text_channel> [day_of_week]')
@@ -215,8 +229,8 @@ class InterviewMatch(commands.Cog):
     @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
     async def send(self, _) -> None:
         """
-        Admin command that execute the send weekly message method, this is executed as usual
-        to all the guilds and for the current day
+        Admin command that execute the send weekly message method for , 
+        this is executed as usual to all the guilds and for the current day
         """
         await self.send_weekly_message()
 
@@ -224,8 +238,8 @@ class InterviewMatch(commands.Cog):
     @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
     async def check(self, _) -> None:
         """
-        Admin command that execute the check weekly message method, this is executed as usual
-        to all the guilds and for the current day
+        Admin command that execute the checking of all weekly messages, 
+        this is executed as usual to all the guilds and for the current day
         """
         await self.check_weekly_message(datetime.datetime.today().weekday())
 
