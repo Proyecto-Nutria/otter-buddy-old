@@ -68,9 +68,7 @@ class InterviewMatch(commands.Cog):
                 db_interview_match.DbInterviewMatch.set_interview_match(entry)
     
     async def check_weekly_message(self, weekday = None) -> None:
-        weekday = (datetime.datetime.today().weekday() - 1 + 7) % 7 if weekday is None else weekday
         """
-        Above operation:
         datetime.datetime.today().weekday() is used to obtain the current day of the week as a number, 
         where 0 represents Monday, and 6 represents Sunday.
 
@@ -78,6 +76,8 @@ class InterviewMatch(commands.Cog):
         Then, it adds 7 and takes the modulo 7 to ensure that the resulting value is in the range of 0 to 6, which represents the days of the week. 
         This guarantees that you get the previous day of the week.
         """
+        weekday = (datetime.datetime.today().weekday() - 1 + 7) % 7 if weekday is None else weekday
+        
         for entry in db_interview_match.DbInterviewMatch.get_day_interview_match(weekday):
             logger.info(entry)
             channel = self.bot.get_channel(entry["channel_id"])
@@ -140,7 +140,7 @@ class InterviewMatch(commands.Cog):
             week_otter_pool.append(placeholder)
 
         for otter in week_otter_pool:
-            otter_roles = [str(otter_role) for otter_role in otter.roles]
+            otter_roles: list[str] = [str(otter_role) for otter_role in otter.roles]
             if OTTER_MODERATOR in otter_roles or OTTER_ADMIN in otter_roles:
                 week_otter_collaborator.append(otter)
             else:
