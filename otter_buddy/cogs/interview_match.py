@@ -4,6 +4,8 @@ import asyncio
 import logging
 import datetime
 
+from typing import List, Tuple
+
 from discord.ext import commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -65,8 +67,17 @@ class InterviewMatch(commands.Cog):
                 entry["message_id"] = message.id
                 db_interview_match.DbInterviewMatch.set_interview_match(entry)
     
-    async def check_weekly_message(self):
-        weekday = (datetime.datetime.today().weekday() - 1 + 7) % 7
+    async def check_weekly_message(self, weekday = None) -> None:
+        """
+        datetime.datetime.today().weekday() is used to obtain the current day of the week as a number, 
+        where 0 represents Monday, and 6 represents Sunday.
+
+        The code subtracts 1 from the current day of the week, effectively making Monday (0) become -1 (undefined). 
+        Then, it adds 7 and takes the modulo 7 to ensure that the resulting value is in the range of 0 to 6, which represents the days of the week. 
+        This guarantees that you get the previous day of the week.
+        """
+        weekday = (datetime.datetime.today().weekday() - 1 + 7) % 7 if weekday is None else weekday
+        
         for entry in db_interview_match.DbInterviewMatch.get_day_interview_match(weekday):
             logger.info(entry)
             channel = self.bot.get_channel(entry["channel_id"])
@@ -121,14 +132,38 @@ class InterviewMatch(commands.Cog):
             conn = EmailConn()
             conn.send_mail(email, "Interview buddy", message)
     
-    def make_pairs(self, week_otter_pool: list, placeholder: discord.Member):
+    def make_pairs(self, week_otter_pool: list, placeholder: discord.Member) -> List[Tuple[discord.Member, discord.Member]]:
         week_otter_pairs: list = []
+        week_otter_collaborator: list = []
+        week_otter_member: list = []
         if len(week_otter_pool) % 2 == 1:
             week_otter_pool.append(placeholder)
-        
-        random.shuffle(week_otter_pool)
-        for idx in range(len(week_otter_pool) // 2):
-            week_otter_pairs.append((week_otter_pool[idx*2], week_otter_pool[idx*2+1]))
+
+        for otter in week_otter_pool:
+            otter_roles: list[str] = [str(otter_role) for otter_role in otter.roles]
+            if OTTER_MODERATOR in otter_roles or OTTER_ADMIN in otter_roles:
+                week_otter_collaborator.append(otter)
+            else:
+                week_otter_member.append(otter)
+
+        random.shuffle(week_otter_collaborator)
+        random.shuffle(week_otter_member)
+
+        # Pair interviewees with colaborators
+        collaborator_index = 0
+        member_index = 0
+        while collaborator_index < len(week_otter_collaborator) and member_index < len(week_otter_member):
+            week_otter_pairs.append((week_otter_collaborator[collaborator_index], week_otter_member[member_index]))
+            collaborator_index += 1
+            member_index += 1
+
+        # Pair aditional colaborators
+        for idx in range(collaborator_index, len(week_otter_collaborator), 2):
+            week_otter_pairs.append((week_otter_collaborator[idx], week_otter_collaborator[idx + 1]))
+
+        # Pair aditional members
+        for idx in range(member_index, len(week_otter_member), 2):
+            week_otter_pairs.append((week_otter_member[idx], week_otter_member[idx + 1]))
         
         return week_otter_pairs
 
@@ -178,6 +213,36 @@ class InterviewMatch(commands.Cog):
         else:
             msg = "No activity was running! 😱"
         await ctx.send(msg)
+    
+    @interview_match.group(  # type: ignore
+    brief="Commands related to trigger manually the Interview Match activity!",
+    invoke_without_command=True,
+    )   
+    @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
+    async def run(self, ctx) -> None:
+        """
+        Admin commands related to trigger and test the activity
+        """
+        await ctx.send_help(ctx.command)
+
+    @run.command(brief="Admin command to trigger the send weekly message job")  # type: ignore
+    @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
+    async def send(self, _) -> None:
+        """
+        Admin command that execute the send weekly message method for , 
+        this is executed as usual to all the guilds and for the current day
+        """
+        await self.send_weekly_message()
+
+    @run.command(brief="Admin command to trigger the check weekly message job")  # type: ignore
+    @commands.has_any_role(OTTER_ADMIN, OTTER_MODERATOR)
+    async def check(self, _) -> None:
+        """
+        Admin command that execute the checking of all weekly messages, 
+        this is executed as usual to all the guilds and for the current day
+        """
+        await self.check_weekly_message(datetime.datetime.today().weekday())
+
 
 
 def setup(bot):
